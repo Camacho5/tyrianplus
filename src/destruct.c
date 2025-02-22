@@ -47,6 +47,8 @@
 /*** Headers ***/
 #include "destruct.h"
 
+void JE_destructGame(void) {}
+#if 0
 #include "config.h"
 #include "config_file.h"
 #include "fonthand.h"
@@ -2744,3 +2746,4 @@ static void JE_pixCool(unsigned int x, unsigned int y, Uint8 c)
 	JE_pix(VGAScreen, x, y - 1, c - 2);
 	JE_pix(VGAScreen, x, y + 1, c - 2);
 }
+#endif
