@@ -11,7 +11,7 @@ tyrian.sav
 # Make build output
 /obj/
 /src/*.gch
-/opentyrian
+/tyrianplus
 
 # Linux debug history
 *.gdb_history

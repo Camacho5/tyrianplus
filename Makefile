@@ -16,7 +16,7 @@ WITH_NETWORK := true
 
 SHELL = /bin/sh
 
-CC ?= gcc
+CXX ?= g++
 INSTALL ?= install
 PKG_CONFIG ?= pkg-config
 
@@ -44,11 +44,11 @@ gamesdir ?= $(datadir)/games
 
 ###
 
-TARGET := opentyrian
+TARGET := tyrianplus
 
-SRCS := $(wildcard src/*.c)
-OBJS := $(SRCS:src/%.c=obj/%.o)
-DEPS := $(SRCS:src/%.c=obj/%.d)
+SRCS := $(wildcard src/*.cpp src/otyr/*.cpp)
+OBJS := $(SRCS:src/%.cpp=obj/%.o)
+DEPS := $(SRCS:src/%.cpp=obj/%.d)
 
 ###
 
@@ -56,14 +56,14 @@ ifeq ($(WITH_NETWORK), true)
     EXTRA_CPPFLAGS += -DWITH_NETWORK
 endif
 
-OPENTYRIAN_VERSION := $(shell $(VCS_IDREV) 2>/dev/null && \
-                              touch src/opentyrian_version.h)
-ifneq ($(OPENTYRIAN_VERSION), )
-    EXTRA_CPPFLAGS += -DOPENTYRIAN_VERSION='"$(OPENTYRIAN_VERSION)"'
+TYRIANPLUS_VERSION := $(shell $(VCS_IDREV) 2>/dev/null && \
+                              touch src/otyr/opentyrian_version.hpp)
+ifneq ($(TYRIANPLUS_VERSION), )
+    EXTRA_CPPFLAGS += -DTYRIANPLUS_VERSION='"$(TYRIANPLUS_VERSION)"'
 endif
 
 CPPFLAGS ?= -MMD
-CPPFLAGS += -DNDEBUG
+CPPFLAGS += -I./src -DNDEBUG
 CFLAGS ?= -pedantic \
           -Wall \
           -Wextra \
@@ -88,7 +88,7 @@ ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \
                $(EXTRA_CPPFLAGS) \
                $(SDL_CPPFLAGS) \
                $(CPPFLAGS)
-ALL_CFLAGS = -std=iso9899:1999 \
+ALL_CFLAGS = -std=c++23 \
              $(CFLAGS)
 ALL_LDFLAGS = $(SDL_LDFLAGS) \
               $(LDFLAGS)
@@ -151,10 +151,10 @@ clean :
 	rm -f $(TARGET)
 
 $(TARGET) : $(OBJS)
-	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(ALL_LDLIBS)
+	$(CXX) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(ALL_LDLIBS)
 
 -include $(DEPS)
 
-obj/%.o : src/%.c
+obj/%.o : src/%.cpp
 	@mkdir -p "$(dir $@)"
-	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $<
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $<
